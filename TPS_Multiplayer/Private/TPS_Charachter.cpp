@@ -14,7 +14,7 @@ ATPS_Charachter::ATPS_Charachter()
 	
 	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
 
-
+	
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
 	SpringArmComponent->SetupAttachment(GetMesh(), "FX_Head");
 	
@@ -168,15 +168,5 @@ void ATPS_Charachter::SpawnWeapon()
 	{
 		FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget,false);
 		Weapon->AttachToComponent(GetMesh(), AttachmentRules, "WeaponSocket");
-	}
-	if (!Weapon)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to spawn weapon!"));
-		return;
-	}
-	if (!WeaponClass)
-	{
-		UE_LOG(LogTemp, Error, TEXT("WeaponClass is not set!"));
-		return;
 	}
 }
