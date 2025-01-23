@@ -1,6 +1,10 @@
 // Shoot Them Up Game
 
 
+#include "TPS_Charachter.h"
+#include "Weapon/TPSWeapon.h"
+#include "GameFramework/Character.h"
+
 #include "TPSWeaponComponent.h"
 
 // Sets default values for this component's properties
@@ -14,21 +18,38 @@ UTPSWeaponComponent::UTPSWeaponComponent()
 }
 
 
+
 // Called when the game starts
 void UTPSWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	SpawnWeapon();
 	
 }
+	void UTPSWeaponComponent::SpawnWeapon()
+	{
 
+		if (!GetWorld()) return;
 
-// Called every frame
-void UTPSWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+		ACharacter* Charachter = Cast<ACharacter>(GetOwner());
+		if (!Charachter) return;
+
+		CurrentWeapon = GetWorld()->SpawnActor<ATPSWeapon>(WeaponClass);
+		CurrentWeapon->SetActorEnableCollision(false);
+		if (!CurrentWeapon) return;
+		
+		FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
+		CurrentWeapon->AttachToComponent(Charachter->GetMesh(), AttachmentRules, WeaponAttachPointName);
+		
+	}
+
+void UTPSWeaponComponent::Fire()
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (!CurrentWeapon)return;
+	CurrentWeapon->Fire();
 
-	// ...
+	
+
 }
 

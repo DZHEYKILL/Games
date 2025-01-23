@@ -1,15 +1,10 @@
-// Shoot Them Up Game
-
 
 #include "TPS_Charachter.h"
 
 
-//DEFINE_LOG_CATEGORY_STATIC(BaseCharacterLog)
-
-// Sets default values
 ATPS_Charachter::ATPS_Charachter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+
 	PrimaryActorTick.bCanEverTick = true;
 	
 	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
@@ -26,6 +21,9 @@ ATPS_Charachter::ATPS_Charachter()
 
 	HealthTextComponent = CreateDefaultSubobject<UTextRenderComponent>("HealthText");
 	HealthTextComponent->SetupAttachment(GetRootComponent());
+
+	TPSWeaponComponent = CreateDefaultSubobject< TPSWeaponComponent>("WeaponComponent");
+
 }
 
 
@@ -49,7 +47,7 @@ void ATPS_Charachter::BeginPlay()
 	HealthComponent->OnHealthChanged.AddUObject(this, &ATPS_Charachter::OnHealthChanged);
 
 
-	SpawnWeapon();
+
 }
 
 // Called every frame
@@ -153,20 +151,3 @@ void ATPS_Charachter::OnGroundLanded(const FHitResult& Hit)
 	TakeDamage(FinalDamage, FDamageEvent{}, nullptr, nullptr);
 }
 
-void ATPS_Charachter::SpawnWeapon()
-{
-
-	if (!GetWorld()) return;
-
-	
-
-	
-
-	const auto Weapon = GetWorld()->SpawnActor<ATPSWeapon>(WeaponClass);
-	Weapon->SetActorEnableCollision(false);
-	if (Weapon)
-	{
-		FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget,false);
-		Weapon->AttachToComponent(GetMesh(), AttachmentRules, "WeaponSocket");
-	}
-}

@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Weapon/TPSWeapon.h"
+
 #include "TPSWeaponComponent.generated.h"
 
 
@@ -16,13 +18,17 @@ public:
 	// Sets default values for this component's properties
 	UTPSWeaponComponent();
 
+	void Fire();
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ATPSWeapon> WeaponClass;
+	UPROPERTY(EditAnywhere)
+	FName WeaponAttachPointName = "WeaponSocket";
+	UPROPERTY(EditAnywhere)
+	ATPSWeapon* CurrentWeapon;
 
-		
-};
+	void SpawnWeapon();

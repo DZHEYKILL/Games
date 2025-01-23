@@ -22,3 +22,8 @@ void ATPSWeapon::BeginPlay()
 }
 
 
+void ATPSWeapon::Fire()
+{
+	
+
+}

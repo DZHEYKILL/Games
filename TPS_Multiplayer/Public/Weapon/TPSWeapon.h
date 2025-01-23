@@ -17,7 +17,8 @@ class TPS_MULTIPLAYER_API ATPSWeapon : public AActor
 public:	
 
 	ATPSWeapon();
-
+	UFUNCTION(BlueprintCallable)
+	virtual void Fire();
 
 	UPROPERTY(EditAnywhere,BluePrintReadWrite,Category = "Weapon")
 	USkeletalMeshComponent* WeaponMesh;
