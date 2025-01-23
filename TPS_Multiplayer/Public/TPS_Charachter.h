@@ -12,6 +12,7 @@
 #include "Components/TextRenderComponent.h" 
 #include "Engine/DamageEvents.h"
 #include "GameFramework/Controller.h"
+#include "Weapon/TPSWeapon.h"
 
 #include "TPS_HealthComponent.h"
 #include "TPS_Charachter.generated.h"
@@ -52,6 +53,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	FVector2D LandedDamage = FVector2D(10.0f, 100.0f);
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ATPSWeapon> WeaponClass;
+
 	UFUNCTION(BlueprintCallable)
 	void OnGroundLanded(const FHitResult& Hit);
 	
@@ -78,5 +82,6 @@ public:
 
 	void OnHealthChanged(float Health);
 
+	void SpawnWeapon();
 
 };

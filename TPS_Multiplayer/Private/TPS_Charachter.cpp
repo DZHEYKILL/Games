@@ -47,6 +47,9 @@ void ATPS_Charachter::BeginPlay()
 
 	HealthComponent->OnDeath.AddUObject(this, &ATPS_Charachter::OnDeath);
 	HealthComponent->OnHealthChanged.AddUObject(this, &ATPS_Charachter::OnHealthChanged);
+
+
+	SpawnWeapon();
 }
 
 // Called every frame
@@ -137,6 +140,7 @@ void ATPS_Charachter::OnHealthChanged(float Health)
 	HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Health)));
 }
 
+
 void ATPS_Charachter::OnGroundLanded(const FHitResult& Hit)
 {
 	const auto FallVelocityZ = GetCharacterMovement()->Velocity.Z;
@@ -147,4 +151,32 @@ void ATPS_Charachter::OnGroundLanded(const FHitResult& Hit)
 	const auto FinalDamage = FMath::GetMappedRangeValueClamped(LandedDamageVelocity, LandedDamage, FallVelocityZ);
 
 	TakeDamage(FinalDamage, FDamageEvent{}, nullptr, nullptr);
+}
+
+void ATPS_Charachter::SpawnWeapon()
+{
+
+	if (!GetWorld()) return;
+
+	
+
+	
+
+	const auto Weapon = GetWorld()->SpawnActor<ATPSWeapon>(WeaponClass);
+	Weapon->SetActorEnableCollision(false);
+	if (Weapon)
+	{
+		FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget,false);
+		Weapon->AttachToComponent(GetMesh(), AttachmentRules, "WeaponSocket");
+	}
+	if (!Weapon)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to spawn weapon!"));
+		return;
+	}
+	if (!WeaponClass)
+	{
+		UE_LOG(LogTemp, Error, TEXT("WeaponClass is not set!"));
+		return;
+	}
 }

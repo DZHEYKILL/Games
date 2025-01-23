@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Components/SkeletalMeshComponent.h"
+
+
 #include "TPSWeapon.generated.h"
 
 UCLASS()
@@ -16,8 +19,8 @@ public:
 	ATPSWeapon();
 
 
-	//UPROPERTY(EditAnywhere,BluePrintReadWrite,Category = "Weapon")
-	//USkeletalMeshComponent ATPSWeapon = ;
+	UPROPERTY(EditAnywhere,BluePrintReadWrite,Category = "Weapon")
+	USkeletalMeshComponent* WeaponMesh;
 protected:
 
 	virtual void BeginPlay() override;
