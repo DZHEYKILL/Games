@@ -1,11 +1,11 @@
 // Shoot Them Up Game
 
+#include "TPSWeaponComponent.h"
 
 #include "TPS_Charachter.h"
 #include "Weapon/TPSWeapon.h"
 #include "GameFramework/Character.h"
 
-#include "TPSWeaponComponent.h"
 
 // Sets default values for this component's properties
 UTPSWeaponComponent::UTPSWeaponComponent()

@@ -22,7 +22,9 @@ ATPS_Charachter::ATPS_Charachter()
 	HealthTextComponent = CreateDefaultSubobject<UTextRenderComponent>("HealthText");
 	HealthTextComponent->SetupAttachment(GetRootComponent());
 
-	TPSWeaponComponent = CreateDefaultSubobject< TPSWeaponComponent>("WeaponComponent");
+	WeaponComponent = CreateDefaultSubobject<UTPSWeaponComponent>("WeaponComponent");
+
+
 
 }
 
@@ -67,6 +69,9 @@ void ATPS_Charachter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 {
 
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	check(WeaponComponent);
+
 	PlayerInputComponent->BindAxis("MoveForward",this,&ATPS_Charachter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight",this,&ATPS_Charachter::MoveRight);
 
@@ -77,6 +82,10 @@ void ATPS_Charachter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed,this, &ATPS_Charachter::Sprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released,this, &ATPS_Charachter::StopSprint);
+
+	PlayerInputComponent->BindAction("Fire", IE_Pressed,WeaponComponent,&UTPSWeaponComponent::Fire);
+
+
 }
 
 void ATPS_Charachter::MoveForward(float Amount) 

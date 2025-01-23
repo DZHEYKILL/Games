@@ -9,12 +9,13 @@
 #include "TPSWeaponComponent.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class TPS_MULTIPLAYER_API UTPSWeaponComponent : public UActorComponent
 {
+
 	GENERATED_BODY()
 
-public:	
+public:
 	// Sets default values for this component's properties
 	UTPSWeaponComponent();
 
@@ -32,3 +33,4 @@ protected:
 	ATPSWeapon* CurrentWeapon;
 
 	void SpawnWeapon();
+};
