@@ -7,7 +7,10 @@ ATPS_Charachter::ATPS_Charachter()
 
 	PrimaryActorTick.bCanEverTick = true;
 	
-	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+
+	
+
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 
 	
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
@@ -80,8 +83,8 @@ void ATPS_Charachter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed,this, &ATPS_Charachter::Jump);
 
-	PlayerInputComponent->BindAction("Sprint", IE_Pressed,this, &ATPS_Charachter::Sprint);
-	PlayerInputComponent->BindAction("Sprint", IE_Released,this, &ATPS_Charachter::StopSprint);
+	PlayerInputComponent->BindAction("Pizda", IE_Pressed,this, &ATPS_Charachter::Sprint);
+	PlayerInputComponent->BindAction("Pizda", IE_Released,this, &ATPS_Charachter::StopSprint);
 
 	PlayerInputComponent->BindAction("Fire", IE_Pressed,WeaponComponent,&UTPSWeaponComponent::Fire);
 
@@ -92,7 +95,7 @@ void ATPS_Charachter::MoveForward(float Amount)
 {
 	AddMovementInput(GetActorForwardVector(), Amount, false);
 	ForwardButtonFloat = Amount;
-
+	
 }
 void ATPS_Charachter::MoveRight(float Amount) 
 {
@@ -116,13 +119,14 @@ void ATPS_Charachter::Turn(float Amount)
 
 void ATPS_Charachter::Sprint()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 900.0f;
+	bSprinting = true;
+	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
 }
 
 void ATPS_Charachter::StopSprint()
 {
-
-	GetCharacterMovement()->MaxWalkSpeed = 750.0f;
+	bSprinting = false;
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 }
 
 void ATPS_Charachter::OnDeath() 
