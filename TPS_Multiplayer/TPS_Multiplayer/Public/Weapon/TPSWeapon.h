@@ -10,6 +10,7 @@
 #include "Engine/DamageEvents.h"
 #include "Logging/LogMacros.h"
 
+
 #include "TPSWeapon.generated.h"
 
 
@@ -34,13 +35,13 @@ protected:
     
     void MakeShot();
     void MakeDamage(const FHitResult& HitResult);
-
-    // Получение контроллера игрока
     APlayerController* GetPlayerController() const;
+    bool GetPlayerViewPont(FVector& ViewLocation, FRotator& ViewRotation) const;
+    FVector GetMuzzleWorldLocation() const;
+    bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const;
+    void MakeHit(FHitResult& HitResult, const FVector TraceStart, const FVector TraceEnd) const;
 
-    // Таймер для стрельбы
     FTimerHandle ShotTimerHandle;
-
     // Компоненты оружия
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
     USkeletalMeshComponent* WeaponMesh;
@@ -50,8 +51,21 @@ protected:
     FName MuzzleSocketName = "MuzzleSocket";
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
-    float TraceMaxDistance = 2000.0f;
+    float TraceMaxDistance = 10000.0f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
-    float DamageAmount = 10.0f; // Значение по умолчанию
+    float DamageAmount = 10.0f; 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+    float TimeBetweenShots = 0.1f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+    float BulletSpread = 1.3f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+    float Magazine = 30.0f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+    bool MagazineEmpty = false;
+
+
+    UFUNCTION(BlueprintCallable)
+    void Reload();
+    FTimerHandle ReloadTimerHandle;
 };
