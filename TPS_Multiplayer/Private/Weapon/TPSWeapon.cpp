@@ -1,49 +1,143 @@
-// Shoot Them Up Game
-
-
 #include "Weapon/TPSWeapon.h"
+#include "GameFramework/PlayerController.h"
+#include "GameFramework/Character.h"
 
-// Sets default values
+
+//DEFINE_LOG_CATEGORY(LogWeapon);
+
+
 ATPSWeapon::ATPSWeapon()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+    PrimaryActorTick.bCanEverTick = true;
 
-	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>("WeaponMesh");
-	SetRootComponent(WeaponMesh);
-
+    WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>("WeaponMesh");
+    SetRootComponent(WeaponMesh);
 }
 
-// Called when the game starts or when spawned
+
 void ATPSWeapon::BeginPlay()
 {
-	Super::BeginPlay();
-	check(WeaponMesh);
-
+    Super::BeginPlay();
+    check(WeaponMesh);
 }
 
 
-void ATPSWeapon::Fire()
+APlayerController* ATPSWeapon::GetPlayerController() const
 {
-	MakeShot();
+    const auto Player = Cast<ACharacter>(GetOwner());
+    if (!Player) return nullptr;
 
+    return Player->GetController<APlayerController>();
 }
+
+
+void ATPSWeapon::StartFire()
+{
+    MakeShot();
+    // Если нужно включить таймер для повторяющихся выстрелов:
+    // GetWorldTimerManager().SetTimer(ShotTimerHandle, this, &ATPSWeapon::MakeShot, TimeBetweenShots, true);
+}
+
+
+void ATPSWeapon::StopFire()
+{
+    GetWorldTimerManager().ClearTimer(ShotTimerHandle);
+}
+
+
 void ATPSWeapon::MakeShot()
 {
-	const FTransform SocketTransform = WeaponMesh->GetSocketTransform(MuzzleSocketName);
-	const FVector TraceStart = SocketTransform.GetLocation();
-	const FVector ShootDirection = SocketTransform.GetRotation().GetForwardVector();
-	const FVector TraceEnd = TraceStart + ShootDirection * TraceMaxDistance;
-	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 3.0f, 0, 3.0f);
+    //if (!GetWorld) return;
+    /*
+    FVector TraceStart, TraceEnd;
+    if (!GetTraceData(TraceStart, TraceEnd))return;
 
-	FHitResult HitResult;
-	GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECollisionChannel::ECC_Visibility);
+    
+    FVector ViewLoction;
+    FRotator ViewRotation;
+    GetPlayerViewPont(ViewLoction,ViewRotation);
+    
 
-	if (HitResult.bBlockingHit)
-	{
-		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Red, false, 5.0f);
-	}
+    //const FTransform SocketTransform = WeaponMesh->GetSocketTransform(MuzzleSocketName);
+    const FVector TraceStart = ViewLoction;
+    const FVector ShootDirection = ViewRotation.Vector();//SocketTransform.GetRotation().GetForwardVector();
+    const FVector TraceEnd = TraceStart + ShootDirection * TraceMaxDistance;
 
+    
+
+    FCollisionQueryParams CollisionParams;
+    CollisionParams.AddIgnoredActor(GetOwner());
+    
+    FHitResult HitResult;
+    (GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECollisionChannel::ECC_Visibility, CollisionParams));
+    */
+    FVector TraceStart, TraceEnd;
+    if (!GetTraceData(TraceStart, TraceEnd))return;
+
+    FHitResult HitResult;
+    MakeHit(HitResult, TraceStart, TraceEnd);
+
+    if(HitResult.bBlockingHit)
+    {
+        MakeDamage(HitResult);
+
+        DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), HitResult.ImpactPoint, FColor::Red, false, 3.0f, 0, 3.0f);
+        DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Red, false, 5.0f);
+
+        //UE_LOG(LogWeapon, Display, TEXT("Bone: %s"), *HitResult.BoneName.ToString());
+    }
+    else
+    {
+        DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), TraceEnd, FColor::Red, false, 3.0f, 0, 3.0f);
+    }
 }
 
 
+void ATPSWeapon::MakeDamage(const FHitResult& HitResult)
+{
+    const auto DamageActor = HitResult.GetActor();
+    if (!DamageActor) return;
+
+
+    const auto  Controller = GetPlayerController();
+    DamageActor->TakeDamage(DamageAmount, FDamageEvent(), Controller, this);
+}
+
+
+
+bool ATPSWeapon::GetPlayerViewPont(FVector& ViewLocation, FRotator& ViewRotation) const
+{
+    const auto Controller = GetPlayerController();
+    if (!Controller) return false;
+
+
+    Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
+    return true;
+}
+FVector ATPSWeapon::GetMuzzleWorldLocation() const 
+{
+    return WeaponMesh->GetSocketLocation(MuzzleSocketName);
+}
+
+bool ATPSWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
+{
+    FVector ViewLoction;
+    FRotator ViewRotation;
+    if(!GetPlayerViewPont(ViewLoction, ViewRotation)) return false;
+
+
+    //const FTransform SocketTransform = WeaponMesh->GetSocketTransform(MuzzleSocketName);
+    TraceStart = ViewLoction;
+    const FVector ShootDirection = ViewRotation.Vector();//SocketTransform.GetRotation().GetForwardVector();
+    TraceEnd = TraceStart + ShootDirection * TraceMaxDistance;
+    return true;
+}
+
+void ATPSWeapon::MakeHit(FHitResult& HitResult, const FVector TraceStart,const FVector TraceEnd) const
+{
+    if (!GetWorld()) return;
+    FCollisionQueryParams CollisionParams;
+    CollisionParams.AddIgnoredActor(GetOwner());
+
+    (GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECollisionChannel::ECC_Visibility, CollisionParams));
+}

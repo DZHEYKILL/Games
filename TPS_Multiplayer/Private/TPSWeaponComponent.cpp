@@ -41,13 +41,22 @@ void UTPSWeaponComponent::BeginPlay()
 		
 		FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
 		CurrentWeapon->AttachToComponent(Charachter->GetMesh(), AttachmentRules, WeaponAttachPointName);
+		CurrentWeapon->SetOwner(Charachter);
 		
 	}
 
-void UTPSWeaponComponent::Fire()
+void UTPSWeaponComponent::StartFire()
 {
 	if (!CurrentWeapon)return;
-	CurrentWeapon->Fire();
+	CurrentWeapon->StartFire();
+
+	
+
+}
+void UTPSWeaponComponent::StopFire()
+{
+	if (!CurrentWeapon)return;
+	CurrentWeapon->StopFire();
 
 	
 

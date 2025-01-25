@@ -19,7 +19,8 @@ public:
 	// Sets default values for this component's properties
 	UTPSWeaponComponent();
 
-	void Fire();
+	void StartFire();
+	void StopFire();
 
 protected:
 	// Called when the game starts

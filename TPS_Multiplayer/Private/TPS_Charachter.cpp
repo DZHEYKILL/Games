@@ -86,7 +86,8 @@ void ATPS_Charachter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	PlayerInputComponent->BindAction("Pizda", IE_Pressed,this, &ATPS_Charachter::Sprint);
 	PlayerInputComponent->BindAction("Pizda", IE_Released,this, &ATPS_Charachter::StopSprint);
 
-	PlayerInputComponent->BindAction("Fire", IE_Pressed,WeaponComponent,&UTPSWeaponComponent::Fire);
+	PlayerInputComponent->BindAction("Fire", IE_Pressed,WeaponComponent,&UTPSWeaponComponent::StartFire);
+	PlayerInputComponent->BindAction("Fire", IE_Released,WeaponComponent,&UTPSWeaponComponent::StopFire);
 
 
 }
