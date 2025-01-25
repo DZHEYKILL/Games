@@ -33,9 +33,9 @@ APlayerController* ATPSWeapon::GetPlayerController() const
 
 void ATPSWeapon::StartFire()
 {
+   
     MakeShot();
-    // Если нужно включить таймер для повторяющихся выстрелов:
-    // GetWorldTimerManager().SetTimer(ShotTimerHandle, this, &ATPSWeapon::MakeShot, TimeBetweenShots, true);
+    GetWorldTimerManager().SetTimer(ShotTimerHandle,this,&ATPSWeapon::MakeShot,TimeBetweenShots,true);
 }
 
 
@@ -103,8 +103,6 @@ void ATPSWeapon::MakeDamage(const FHitResult& HitResult)
     DamageActor->TakeDamage(DamageAmount, FDamageEvent(), Controller, this);
 }
 
-
-
 bool ATPSWeapon::GetPlayerViewPont(FVector& ViewLocation, FRotator& ViewRotation) const
 {
     const auto Controller = GetPlayerController();
@@ -114,6 +112,7 @@ bool ATPSWeapon::GetPlayerViewPont(FVector& ViewLocation, FRotator& ViewRotation
     Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
     return true;
 }
+
 FVector ATPSWeapon::GetMuzzleWorldLocation() const 
 {
     return WeaponMesh->GetSocketLocation(MuzzleSocketName);
@@ -125,10 +124,9 @@ bool ATPSWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
     FRotator ViewRotation;
     if(!GetPlayerViewPont(ViewLoction, ViewRotation)) return false;
 
-
-    //const FTransform SocketTransform = WeaponMesh->GetSocketTransform(MuzzleSocketName);
     TraceStart = ViewLoction;
-    const FVector ShootDirection = ViewRotation.Vector();//SocketTransform.GetRotation().GetForwardVector();
+    const auto HalfRad = FMath::DegreesToRadians(BulletSpread);
+    const FVector ShootDirection = FMath::VRandCone( ViewRotation.Vector(),HalfRad);
     TraceEnd = TraceStart + ShootDirection * TraceMaxDistance;
     return true;
 }
